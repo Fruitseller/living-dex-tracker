@@ -58,14 +58,17 @@
 	}
 
 	img {
-		width: 48px;
-		height: 48px;
-		image-rendering: pixelated;
+		width: 100%;
+		height: auto;
+		max-width: 80px;
+		max-height: 80px;
+		object-fit: contain;
+		image-rendering: auto;
 	}
 
 	.placeholder {
-		width: 48px;
-		height: 48px;
+		width: 100%;
+		height: 80px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
