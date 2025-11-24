@@ -20,6 +20,11 @@ export interface PokeAPIResponse {
 	name: string;
 	sprites: {
 		front_default: string;
+		other?: {
+			home?: {
+				front_default: string;
+			};
+		};
 		versions?: {
 			'generation-viii'?: {
 				icons?: {

@@ -64,7 +64,10 @@ export async function fetchPokemon(id: number): Promise<Pokemon> {
 		)?.name || pokemonData.name;
 
 		// Get sprite URL from Pokémon Home
-		const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemonData.id}.png`;
+		const spriteUrl =
+			pokemonData.sprites.other?.home?.front_default ||
+			pokemonData.sprites.front_default ||
+			'';
 
 		const pokemon: Pokemon = {
 			id: pokemonData.id,
