@@ -30,21 +30,36 @@
 		align-items: center;
 		justify-content: center;
 		background: var(--card-bg);
-		border: 2px solid var(--border-color);
-		border-radius: 8px;
-		padding: 0.5rem;
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		padding: 0.25rem;
 		transition: all 0.2s ease;
 		opacity: 0.35;
 		filter: grayscale(100%);
 		cursor: pointer;
-		min-height: 80px;
+		min-height: 60px;
 		position: relative;
+	}
+
+	@media (min-width: 640px) {
+		.card {
+			border: 2px solid var(--border-color);
+			border-radius: 8px;
+			padding: 0.5rem;
+			min-height: 80px;
+		}
 	}
 
 	.card.caught {
 		opacity: 1;
 		filter: grayscale(0%);
 		border-color: var(--primary-color);
+	}
+
+	@media (min-width: 640px) {
+		.card.caught {
+			border-width: 2px;
+		}
 	}
 
 	.card:hover {
@@ -60,27 +75,48 @@
 	img {
 		width: 100%;
 		height: auto;
-		max-width: 80px;
-		max-height: 80px;
+		max-width: 48px;
+		max-height: 48px;
 		object-fit: contain;
 		image-rendering: auto;
 	}
 
+	@media (min-width: 640px) {
+		img {
+			max-width: 80px;
+			max-height: 80px;
+		}
+	}
+
 	.placeholder {
 		width: 100%;
-		height: 80px;
+		height: 48px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 24px;
+		font-size: 20px;
 		color: var(--text-secondary);
 	}
 
+	@media (min-width: 640px) {
+		.placeholder {
+			height: 80px;
+			font-size: 24px;
+		}
+	}
+
 	.id {
-		font-size: 0.75rem;
+		font-size: 0.625rem;
 		color: var(--text-secondary);
 		font-weight: 500;
-		margin-top: 0.25rem;
+		margin-top: 0.125rem;
+	}
+
+	@media (min-width: 640px) {
+		.id {
+			font-size: 0.75rem;
+			margin-top: 0.25rem;
+		}
 	}
 
 	.card.caught .id {
