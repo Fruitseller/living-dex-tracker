@@ -71,19 +71,7 @@
 
 	.pokemon-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-		gap: 0.75rem;
-	}
-
-	@media (min-width: 640px) {
-		.pokemon-grid {
-			grid-template-columns: repeat(6, 1fr);
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.pokemon-grid {
-			grid-template-columns: repeat(10, 1fr);
-		}
+		grid-template-columns: repeat(6, 1fr);
+		gap: 0.5rem;
 	}
 </style>

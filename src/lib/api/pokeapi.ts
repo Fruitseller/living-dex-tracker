@@ -63,11 +63,8 @@ export async function fetchPokemon(id: number): Promise<Pokemon> {
 			(n) => n.language.name === 'de'
 		)?.name || pokemonData.name;
 
-		// Get sprite URL (prefer Gen VIII icons)
-		const spriteUrl =
-			pokemonData.sprites.versions?.['generation-viii']?.icons?.front_default ||
-			pokemonData.sprites.front_default ||
-			'';
+		// Get sprite URL from Pokémon Home
+		const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemonData.id}.png`;
 
 		const pokemon: Pokemon = {
 			id: pokemonData.id,
