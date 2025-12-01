@@ -10,6 +10,35 @@
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 	let totalPokemon = $state(0);
+	let currentBoxIndex = $state(0);
+
+	// Function to scroll to a specific box and center it in viewport
+	function scrollToBox(index: number) {
+		const boxElements = document.querySelectorAll('.box');
+		if (index >= 0 && index < boxElements.length) {
+			const boxElement = boxElements[index] as HTMLElement;
+			boxElement.scrollIntoView({
+				behavior: 'smooth',
+				block: 'center'
+			});
+			currentBoxIndex = index;
+		}
+	}
+
+	// Handle keyboard navigation
+	function handleKeyDown(event: KeyboardEvent) {
+		if (loading || error) return;
+
+		if (event.key === 'PageDown') {
+			event.preventDefault();
+			const nextIndex = Math.min(currentBoxIndex + 1, boxes.length - 1);
+			scrollToBox(nextIndex);
+		} else if (event.key === 'PageUp') {
+			event.preventDefault();
+			const prevIndex = Math.max(currentBoxIndex - 1, 0);
+			scrollToBox(prevIndex);
+		}
+	}
 
 	onMount(async () => {
 		try {
@@ -30,6 +59,8 @@
 	<title>Living Pokédex Tracker</title>
 	<meta name="description" content="Track your Living Pokédex collection in Pokémon Home" />
 </svelte:head>
+
+<svelte:window onkeydown={handleKeyDown} />
 
 {#if loading}
 	<div class="loading-container">

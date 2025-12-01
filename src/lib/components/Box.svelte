@@ -18,7 +18,7 @@
 	});
 </script>
 
-<div class="box">
+<div class="box" data-box-id={box.name}>
 	<div class="box-header">
 		<h2 class="box-name">Box: {box.name}</h2>
 		<span class="box-progress" class:complete={progress.caught === progress.total}>
