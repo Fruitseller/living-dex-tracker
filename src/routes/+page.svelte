@@ -4,6 +4,7 @@
 	import type { Box as BoxType } from '$lib/types';
 	import Box from '$lib/components/Box.svelte';
 	import ProgressHeader from '$lib/components/ProgressHeader.svelte';
+	import NavigationButtons from '$lib/components/NavigationButtons.svelte';
 	import '../app.css';
 
 	let boxes = $state<BoxType[]>([]);
@@ -11,6 +12,10 @@
 	let error = $state<string | null>(null);
 	let totalPokemon = $state(0);
 	let currentBoxIndex = $state(0);
+
+	// Derived states for navigation
+	let canGoPrevious = $derived(currentBoxIndex > 0);
+	let canGoNext = $derived(currentBoxIndex < boxes.length - 1);
 
 	// Function to scroll to a specific box and center it in viewport
 	function scrollToBox(index: number) {
@@ -22,6 +27,19 @@
 				block: 'center'
 			});
 			currentBoxIndex = index;
+		}
+	}
+
+	// Navigation handlers for buttons
+	function goToPreviousBox() {
+		if (canGoPrevious) {
+			scrollToBox(currentBoxIndex - 1);
+		}
+	}
+
+	function goToNextBox() {
+		if (canGoNext) {
+			scrollToBox(currentBoxIndex + 1);
 		}
 	}
 
@@ -91,6 +109,13 @@
 		</p>
 		<p>Pokémon and Pokémon character names are trademarks of Nintendo.</p>
 	</footer>
+
+	<NavigationButtons
+		onPrevious={goToPreviousBox}
+		onNext={goToNextBox}
+		canGoPrevious={canGoPrevious}
+		canGoNext={canGoNext}
+	/>
 {/if}
 
 <style>
