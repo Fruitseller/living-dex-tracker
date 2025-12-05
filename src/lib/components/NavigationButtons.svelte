@@ -68,7 +68,7 @@
 			gap: 0.75rem;
 			position: fixed;
 			right: 1rem;
-			top: 50%;
+			top: 75%;
 			transform: translateY(-50%);
 			z-index: 1000;
 		}

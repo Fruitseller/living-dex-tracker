@@ -64,6 +64,40 @@
 			const allPokemon = await fetchAllPokemon();
 			totalPokemon = allPokemon.length;
 			boxes = generateBoxes(allPokemon);
+
+			// Set up Intersection Observer to track currently visible box
+			// This allows navigation to work correctly after manual scrolling
+			const observerOptions = {
+				root: null,
+				rootMargin: '-40% 0px -40% 0px', // Only trigger when box is in middle 20% of viewport
+				threshold: 0
+			};
+
+			const observerCallback: IntersectionObserverCallback = (entries) => {
+				// Find the box that is most visible in the center of the viewport
+				const visibleBoxes = entries.filter((entry) => entry.isIntersecting);
+				if (visibleBoxes.length > 0) {
+					// Get the box that is closest to the center
+					const boxElements = Array.from(document.querySelectorAll('.box'));
+					const index = boxElements.indexOf(visibleBoxes[0].target);
+					if (index !== -1) {
+						currentBoxIndex = index;
+					}
+				}
+			};
+
+			const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+			// Observe all box elements
+			setTimeout(() => {
+				const boxElements = document.querySelectorAll('.box');
+				boxElements.forEach((box) => observer.observe(box));
+			}, 100);
+
+			// Cleanup on unmount
+			return () => {
+				observer.disconnect();
+			};
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to load Pokémon data';
 			console.error('Error loading Pokémon:', err);
