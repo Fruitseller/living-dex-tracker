@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { collection } from '$lib/stores/collection';
-	import { calculateProgress } from '$lib/stores/collection';
+	import { collection, calculateProgress } from '$lib/stores/collection';
 
 	interface Props {
 		total: number;
@@ -8,12 +7,7 @@
 
 	let { total }: Props = $props();
 
-	let caughtIds = $state($collection);
-	let progress = $derived(calculateProgress(caughtIds, total));
-
-	collection.subscribe(value => {
-		caughtIds = value;
-	});
+	let progress = $derived(calculateProgress($collection, total));
 </script>
 
 <header class="progress-header">

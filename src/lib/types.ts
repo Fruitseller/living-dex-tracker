@@ -11,10 +11,6 @@ export interface Box {
 	pokemon: Pokemon[];
 }
 
-export interface CollectionState {
-	caughtIds: Set<number>;
-}
-
 export interface PokeAPIResponse {
 	id: number;
 	name: string;
@@ -23,13 +19,6 @@ export interface PokeAPIResponse {
 		other?: {
 			home?: {
 				front_default: string;
-			};
-		};
-		versions?: {
-			'generation-viii'?: {
-				icons?: {
-					front_default: string;
-				};
 			};
 		};
 	};
