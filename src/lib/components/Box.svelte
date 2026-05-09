@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { Box as BoxType } from '$lib/types';
 	import PokemonCard from './PokemonCard.svelte';
-	import { collection } from '$lib/stores/collection';
-	import { calculateBoxProgress } from '$lib/stores/collection';
+	import { collection, calculateBoxProgress } from '$lib/stores/collection';
 
 	interface Props {
 		box: BoxType;
@@ -10,12 +9,7 @@
 
 	let { box }: Props = $props();
 
-	let caughtIds = $state($collection);
-	let progress = $derived(calculateBoxProgress(caughtIds, box.startId, box.endId));
-
-	collection.subscribe(value => {
-		caughtIds = value;
-	});
+	let progress = $derived(calculateBoxProgress($collection, box.startId, box.endId));
 </script>
 
 <div class="box" data-box-id={box.name}>
@@ -27,7 +21,7 @@
 	</div>
 	<div class="pokemon-grid">
 		{#each box.pokemon as pokemon (pokemon.id)}
-			<PokemonCard {pokemon} caught={caughtIds.has(pokemon.id)} />
+			<PokemonCard {pokemon} caught={$collection.has(pokemon.id)} />
 		{/each}
 	</div>
 </div>

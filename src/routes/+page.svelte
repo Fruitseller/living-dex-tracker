@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { fetchAllPokemon, generateBoxes } from '$lib/api/pokeapi';
 	import type { Box as BoxType } from '$lib/types';
 	import Box from '$lib/components/Box.svelte';
@@ -13,97 +13,70 @@
 	let totalPokemon = $state(0);
 	let currentBoxIndex = $state(0);
 
-	// Derived states for navigation
 	let canGoPrevious = $derived(currentBoxIndex > 0);
 	let canGoNext = $derived(currentBoxIndex < boxes.length - 1);
 
-	// Function to scroll to a specific box and center it in viewport
 	function scrollToBox(index: number) {
 		const boxElements = document.querySelectorAll('.box');
 		if (index >= 0 && index < boxElements.length) {
 			const boxElement = boxElements[index] as HTMLElement;
-			boxElement.scrollIntoView({
-				behavior: 'smooth',
-				block: 'center'
-			});
+			boxElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			currentBoxIndex = index;
 		}
 	}
 
-	// Navigation handlers for buttons
 	function goToPreviousBox() {
-		if (canGoPrevious) {
-			scrollToBox(currentBoxIndex - 1);
-		}
+		if (canGoPrevious) scrollToBox(currentBoxIndex - 1);
 	}
 
 	function goToNextBox() {
-		if (canGoNext) {
-			scrollToBox(currentBoxIndex + 1);
-		}
+		if (canGoNext) scrollToBox(currentBoxIndex + 1);
 	}
 
-	// Handle keyboard navigation
 	function handleKeyDown(event: KeyboardEvent) {
 		if (loading || error) return;
 
 		if (event.key === 'PageDown') {
 			event.preventDefault();
-			const nextIndex = Math.min(currentBoxIndex + 1, boxes.length - 1);
-			scrollToBox(nextIndex);
+			scrollToBox(Math.min(currentBoxIndex + 1, boxes.length - 1));
 		} else if (event.key === 'PageUp') {
 			event.preventDefault();
-			const prevIndex = Math.max(currentBoxIndex - 1, 0);
-			scrollToBox(prevIndex);
+			scrollToBox(Math.max(currentBoxIndex - 1, 0));
 		}
 	}
 
-	onMount(async () => {
-		try {
-			loading = true;
-			const allPokemon = await fetchAllPokemon();
-			totalPokemon = allPokemon.length;
-			boxes = generateBoxes(allPokemon);
+	onMount(() => {
+		let observer: IntersectionObserver | undefined;
 
-			// Set up Intersection Observer to track currently visible box
-			// This allows navigation to work correctly after manual scrolling
-			const observerOptions = {
-				root: null,
-				rootMargin: '-40% 0px -40% 0px', // Only trigger when box is in middle 20% of viewport
-				threshold: 0
-			};
+		(async () => {
+			try {
+				const allPokemon = await fetchAllPokemon();
+				totalPokemon = allPokemon.length;
+				boxes = generateBoxes(allPokemon);
+				loading = false;
 
-			const observerCallback: IntersectionObserverCallback = (entries) => {
-				// Find the box that is most visible in the center of the viewport
-				const visibleBoxes = entries.filter((entry) => entry.isIntersecting);
-				if (visibleBoxes.length > 0) {
-					// Get the box that is closest to the center
-					const boxElements = Array.from(document.querySelectorAll('.box'));
-					const index = boxElements.indexOf(visibleBoxes[0].target);
-					if (index !== -1) {
-						currentBoxIndex = index;
-					}
-				}
-			};
+				await tick();
 
-			const observer = new IntersectionObserver(observerCallback, observerOptions);
+				observer = new IntersectionObserver(
+					(entries) => {
+						const visible = entries.find((entry) => entry.isIntersecting);
+						if (!visible) return;
+						const boxElements = Array.from(document.querySelectorAll('.box'));
+						const index = boxElements.indexOf(visible.target);
+						if (index !== -1) currentBoxIndex = index;
+					},
+					{ rootMargin: '-40% 0px -40% 0px', threshold: 0 }
+				);
 
-			// Observe all box elements
-			setTimeout(() => {
-				const boxElements = document.querySelectorAll('.box');
-				boxElements.forEach((box) => observer.observe(box));
-			}, 100);
+				document.querySelectorAll('.box').forEach((box) => observer!.observe(box));
+			} catch (err) {
+				error = err instanceof Error ? err.message : 'Failed to load Pokémon data';
+				console.error('Error loading Pokémon:', err);
+				loading = false;
+			}
+		})();
 
-			// Cleanup on unmount
-			return () => {
-				observer.disconnect();
-			};
-		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to load Pokémon data';
-			console.error('Error loading Pokémon:', err);
-		} finally {
-			loading = false;
-		}
+		return () => observer?.disconnect();
 	});
 </script>
 
