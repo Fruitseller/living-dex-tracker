@@ -90,5 +90,5 @@ npm run check:watch  # Run svelte-check in watch mode
 ## Repository Etiquette
 
 - **Branch Naming**: `claude/feature-name-sessionid`
-- **Commit Messages**: Concise, descriptive, in German (project language)
+- **Commit Messages**: Concise, descriptive, in English
 - **Git Operations**: Always develop on feature branches, never push to main directly
